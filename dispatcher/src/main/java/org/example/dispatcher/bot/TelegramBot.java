@@ -41,6 +41,8 @@ public class TelegramBot extends TelegramLongPollingBot implements BotService{
             Long chatId = update.getMessage().getChatId();
             commandService.processCommand(command, chatId);
         }
+
+        System.out.println("C123123");
     }
 
 
@@ -56,4 +58,5 @@ public class TelegramBot extends TelegramLongPollingBot implements BotService{
             log.error(e);
         }
     }
+
 }
