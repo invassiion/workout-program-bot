@@ -44,6 +44,10 @@ public class TelegramBot extends TelegramLongPollingBot{
        commandService.processUpdate(update);
     }
 
+
+
+
+
     public void sendAnswerMessage(SendMessage message) {
         if (message != null) {
             try {
