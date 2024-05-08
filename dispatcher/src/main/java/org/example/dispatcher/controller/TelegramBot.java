@@ -44,10 +44,6 @@ public class TelegramBot extends TelegramLongPollingBot{
        updateController.processUpdate(update);
     }
 
-
-
-
-
     public void sendAnswerMessage(SendMessage message) {
         if (message != null) {
             try {
