@@ -46,7 +46,7 @@ public class UpdateController {
         telegramBot.sendAnswerMessage(sendMessage);
     }
 
-    public void processCommand(Update update) {
+   private void processCommand(Update update) {
         updateProducer.produce(update);
         setCommandReceivedView(update);
     }
