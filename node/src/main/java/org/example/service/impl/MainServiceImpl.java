@@ -2,7 +2,7 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.example.RawData;
+import org.example.entity.RawData;
 import org.example.dao.AppUserDAO;
 import org.example.dao.RawDataDAO;
 import org.example.entity.AppUser;
@@ -33,9 +33,10 @@ public class MainServiceImpl implements MainService {
         
         if (CANCEL.equals(text)) {
             output = cancelProcess(appUser);
-        } else if (START.equals(text) || HELP.equals(text)) {
+        } else if (START.equals(text) || HELP.equals(text) || SCHEDULE.equals(text)) {
             output = processServiceCommand(appUser, text);
-        } else {
+        } 
+        else {
             log.error("Unknown command: "+ text );
             output = "Неизвестная ошибка! Введите /cancel и попробуйте снова!";
         }
@@ -56,9 +57,19 @@ public class MainServiceImpl implements MainService {
             return help();
         } else if (START.equals(cmd)) {
             return "Приветствую! Чтобы посмотреть список доступных команд введите /help";
+        } else if (SCHEDULE.equals(cmd)) {
+            return processSchedule(cmd);
         } else {
             return "Неизвестная команда! Чтобы посмотреть список доступных команд введите /help";
         }
+    }
+
+    private String processSchedule(String cmd) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText(cmd);
+        producerService.produceToParser(sendMessage);
+
+        return "Расписание отправлено на обработку";
     }
 
     private String help() {

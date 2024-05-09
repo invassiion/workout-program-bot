@@ -3,7 +3,8 @@ package org.example.service.enums;
 public enum ServiceCommands {
     HELP("/help"),
     CANCEL("/cancel"),
-    START("/start");
+    START("/start"),
+    SCHEDULE("/schedule");
     private final String cmd;
 
     ServiceCommands(String cmd) {

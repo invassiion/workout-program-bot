@@ -1,6 +1,6 @@
 package org.example.service.impl;
 
-import org.example.RawData;
+import org.example.entity.RawData;
 import org.example.dao.RawDataDAO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

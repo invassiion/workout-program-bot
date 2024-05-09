@@ -6,9 +6,10 @@ import org.example.service.ConsumerService;
 import org.example.service.MainService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import static org.example.model.RabbitQueue.TEXT_MESSAGE_UPDATE;
+import static org.example.model.RabbitQueue.*;
 
 @RequiredArgsConstructor
 @Log4j
@@ -21,6 +22,18 @@ public class ConsumerServiceImpl implements ConsumerService {
     public void consumeTextMessageUpdate(Update update) {
         log.debug("NODE: Text message is received");
         mainService.processTextMessage(update);
+    }
+
+    @Override
+    @RabbitListener(queues = MESSAGE_TO_PARSING)
+    public void consumeMessageToParsing(SendMessage sendMessage) {
+        log.debug("NODE: Message to parsing is received");
+    }
+
+    @Override
+    @RabbitListener(queues = BEFORE_PARSING)
+    public void consumeBeforeParsing(SendMessage sendMessage) {
+        log.debug("NODE: Message before parsing is received");
     }
 
 }

@@ -1,4 +1,4 @@
-package org.example;
+package org.example.entity;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.*;
