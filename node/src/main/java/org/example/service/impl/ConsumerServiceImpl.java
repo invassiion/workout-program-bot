@@ -24,16 +24,17 @@ public class ConsumerServiceImpl implements ConsumerService {
         mainService.processTextMessage(update);
     }
 
-    @Override
-    @RabbitListener(queues = MESSAGE_TO_PARSING)
-    public void consumeMessageToParsing(SendMessage sendMessage) {
-        log.debug("NODE: Message to parsing is received");
-    }
+//    @Override
+//    @RabbitListener(queues = MESSAGE_TO_PARSING)
+//    public void consumeMessageToParsing(SendMessage sendMessage) {
+//        log.debug("NODE: Message to parsing is received");
+//    }
 
     @Override
     @RabbitListener(queues = BEFORE_PARSING)
     public void consumeBeforeParsing(SendMessage sendMessage) {
         log.debug("NODE: Message before parsing is received");
+        mainService.processScheduleMessage(sendMessage);
     }
 
 }

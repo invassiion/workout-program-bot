@@ -25,4 +25,14 @@ public class RabbitConfiguration {
     public Queue answerMessageQueue() {
         return new Queue(ANSWER_MESSAGE);
     }
+
+    @Bean
+    public Queue messageToParsing() {
+        return new Queue(MESSAGE_TO_PARSING);
+    }
+
+    @Bean
+    public Queue beforeParsing() {
+        return new Queue(BEFORE_PARSING);
+    }
 }

@@ -45,6 +45,12 @@ public class MainServiceImpl implements MainService {
         sendAnswer(output, chatId);
     }
 
+    @Override
+    public void processScheduleMessage(SendMessage sendMessage) {
+        producerService.producerAnswer(sendMessage);
+        log.debug("Message is recevied from Node");
+    }
+
     private void sendAnswer(String output, Long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
@@ -103,4 +109,6 @@ public class MainServiceImpl implements MainService {
                 .build();
         rawDataDAO.save(rawData);
     }
+
+
 }
