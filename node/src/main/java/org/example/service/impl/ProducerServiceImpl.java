@@ -20,9 +20,5 @@ public class ProducerServiceImpl implements ProducerService {
         rabbitTemplate.convertAndSend(ANSWER_MESSAGE, sendMessage);
     }
 
-    @Override
-    public void produceToParser(SendMessage sendMessage) {
-        rabbitTemplate.convertAndSend(MESSAGE_TO_PARSING, sendMessage);
-    }
 
 }

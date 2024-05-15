@@ -13,7 +13,6 @@
         <module>common-rabbitmq</module>
         <module>node</module>
         <module>common-jpa</module>
-        <module>common-parser</module>
     </modules>
 
     <properties>

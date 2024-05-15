@@ -4,3 +4,8 @@ spring.rabbitmq.host=localhost
 spring.rabbitmq.port=5672
 spring.rabbitmq.username=denis
 spring.rabbitmq.password=p@ssw0rd
+
+sibsutis.loginUrl=https://my.sibsutis.ru/auth/
+sibsutis.scheduleUrl=https://my.sibsutis.ru/students/schedule/
+sibsutis.userName=
+sibsutis.password=

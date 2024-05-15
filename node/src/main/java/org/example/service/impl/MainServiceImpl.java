@@ -8,6 +8,7 @@ import org.example.dao.RawDataDAO;
 import org.example.entity.AppUser;
 import org.example.service.MainService;
 import org.example.service.ProducerService;
+import org.example.service.ScheduleService;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -23,6 +24,7 @@ public class MainServiceImpl implements MainService {
     private final AppUserDAO appUserDAO;
     private final RawDataDAO rawDataDAO;
     private final ProducerService producerService;
+    private final ScheduleService scheduleService;
     
     @Override
     public void processTextMessage(Update update) {
@@ -33,7 +35,7 @@ public class MainServiceImpl implements MainService {
         
         if (CANCEL.equals(text)) {
             output = cancelProcess(appUser);
-        } else if (START.equals(text) || HELP.equals(text) || SCHEDULE.equals(text)) {
+        } else if (START.equals(text) || HELP.equals(text) || text.startsWith(SCHEDULE.toString())) {
             output = processServiceCommand(appUser, text);
         } 
         else {
@@ -48,7 +50,7 @@ public class MainServiceImpl implements MainService {
     @Override
     public void processScheduleMessage(SendMessage sendMessage) {
         producerService.producerAnswer(sendMessage);
-        log.debug("Message is recevied from Node");
+        log.debug("Message is received from Node");
     }
 
     private void sendAnswer(String output, Long chatId) {
@@ -63,7 +65,7 @@ public class MainServiceImpl implements MainService {
             return help();
         } else if (START.equals(cmd)) {
             return "Приветствую! Чтобы посмотреть список доступных команд введите /help";
-        } else if (SCHEDULE.equals(cmd)) {
+        } else if (cmd.startsWith(SCHEDULE.toString())) {
             return processSchedule(cmd);
         } else {
             return "Неизвестная команда! Чтобы посмотреть список доступных команд введите /help";
@@ -71,16 +73,21 @@ public class MainServiceImpl implements MainService {
     }
 
     private String processSchedule(String cmd) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(cmd);
-        producerService.produceToParser(sendMessage);
+       String[] parts = cmd.split(" ");
+       if (parts.length < 3) {
+           return "Некорректная команда! Используйте /schedule [группа] [Дата]";
+       }
 
-        return "Расписание отправлено на обработку";
+       String group = parts[1];
+       String date = parts[2];
+
+      return scheduleService.getSchedule(group,date);
     }
 
     private String help() {
         return "Список доступных команд:\n"
-                + "/cancel - отмена выполнения текущей команды;";
+                + "/cancel - отмена выполнения текущей команды;"
+                + "/schedule [группа] [дата] - получить расписание на указанную дату для указанной группы.";
     }
 
     private String cancelProcess(AppUser appUser) {
