@@ -2,25 +2,29 @@ package org.example.service.impl;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.example.service.ScheduleService;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 
+@Log4j
 @Getter
 @RequiredArgsConstructor
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
-
+    @Autowired
     private final RestTemplate restTemplate;
 
     @Value("${sibsutis.loginUrl}")
@@ -33,99 +37,77 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Value("${sibsutis.password}")
     private String password;
 
+
     @Override
     public String getSchedule(String group, String date) {
 
-        if (!login()) {
-            return "Не удалось авторизоваться на сайте.";
+        try {
+            if (login()) {
+                Document schedulePage = Jsoup.connect(getScheduleUrl()).get();
+                Element scheduleElement = schedulePage.selectFirst("div.schedule");
+                String htmlSchedule = scheduleElement.toString();
+                if (scheduleElement != null) {
+                    return scheduleElement.text();
+                } else return "Расписание не найдено!";
+            } else {
+                return "Ошибка входа на сайт.";
+            }
+        } catch (IOException e) {
+            log.error("Ошибка в получении расписания" + e);
+            return "Произошла ошибка при получении расписания.";
         }
 
-        String htmlSchedule = restTemplate.getForObject(getScheduleUrl(),String.class);
-
-        if (htmlSchedule == null) {
-            return "Не удалось получить расписание.";
-        }
-
-        return parseSchedule(htmlSchedule);
     }
 
     private String parseSchedule(String htmlSchedule) {
-        Document document = Jsoup.parse(htmlSchedule);
-        Element scheduleContainer = document.selectFirst("div.schedule.container");
-
-        if (scheduleContainer == null) {
-            return "Расписание не найдено.";
-        }
-
         StringBuilder scheduleBuilder = new StringBuilder();
+        Document document = Jsoup.parse(htmlSchedule);
+        Elements scheduleItems = document.select(".schedule__item");
 
-        // Обрабатываем блоки расписания
-        for (Element item : scheduleContainer.select("div.schedule__item")) {
-            // Заголовок (например, "Расписание экзаменов" или "Расписание занятий")
-            Element title = item.selectFirst("h1");
-            if (title != null) {
-                scheduleBuilder.append(title.text()).append("\n");
+        for (Element scheduleItem : scheduleItems) {
+            Element timeTitle = scheduleItem.selectFirst("h5.card-title");
+            if (timeTitle != null) {
+                scheduleBuilder.append(timeTitle.text()).append("\n");
             }
 
-            // Время занятий/экзаменов
-            Elements times = item.select("h5.card-title");
-            for (Element time : times) {
-                scheduleBuilder.append(time.text()).append("\n");
-            }
-
-            // Данные по каждому занятию/экзамену
-            for (Element card : item.select("div.card")) {
-                Element header = card.selectFirst("div.card-header h6");
-                Element type = card.selectFirst("div.card-header span.alert");
-                Element body = card.selectFirst("div.card-body");
-
-                if (header != null) {
-                    scheduleBuilder.append(header.text()).append(" - ");
+            Elements lessonCards = scheduleItem.select(".card.border-info.my-3");
+            for (Element lessonCard : lessonCards) {
+                Element lessonTitle = lessonCard.selectFirst(".card-header.bold h6");
+                if (lessonTitle != null) {
+                    scheduleBuilder.append(lessonTitle.text()).append("\n");
                 }
-                if (type != null) {
-                    scheduleBuilder.append(type.text()).append("\n");
+                Element lessonType = lessonCard.selectFirst(".card-header.bold .alert.alert-info");
+                if (lessonType != null) {
+                    scheduleBuilder.append(lessonType.text()).append("\n");
                 }
-
-                if (body != null) {
-                    for (Element bodyItem : body.children()) {
-                        scheduleBuilder.append(bodyItem.text()).append("\n");
-                    }
+                Elements lessonDetails = lessonCard.select(".card-body div");
+                for (Element detail : lessonDetails) {
+                    scheduleBuilder.append(detail.text()).append("\n");
                 }
-
                 scheduleBuilder.append("\n");
             }
-
             scheduleBuilder.append("\n");
         }
-
-        return scheduleBuilder.toString().trim();
+        return scheduleBuilder.toString();
     }
 
+        private boolean login () throws IOException {
+            Connection.Response loginFormResponse = Jsoup.connect(getLoginURL())
+                    .method(Connection.Method.GET)
+                    .execute();
+            Document loginPage = loginFormResponse.parse();
+            String authToken = loginPage.select("input[name=_csrf]").attr("value");
 
-    private String fetchSchedule(String scheduleUrl, String group, String date) {
+            Connection.Response loginActionResponse = Jsoup.connect(getLoginURL())
+                    .cookies(loginFormResponse.cookies())
+                    .data("username", getUserName())
+                    .data("password", getPassword())
+                    .data("_csrf", authToken)
+                    .method(Connection.Method.POST)
+                    .execute();
 
-        String url = String.format("%s?group=%s&date=%s", scheduleUrl, group, date);
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
+            return loginActionResponse.statusCode() == 200;
         }
 
-        return null;
     }
 
-    private boolean login() {
-        MultiValueMap <String, String> loginForm = new LinkedMultiValueMap<>();
-        loginForm.add("username", getUserName());
-        loginForm.add("password",getPassword());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(loginForm, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(getLoginURL(), request, String.class);
-
-        return response.getStatusCode() == HttpStatus.OK;
-    }
-
-}
