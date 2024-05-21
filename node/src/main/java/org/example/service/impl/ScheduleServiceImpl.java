@@ -41,21 +41,23 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public String getSchedule(String group, String date) {
 
-        try {
-            if (login()) {
-                Document schedulePage = Jsoup.connect(getScheduleUrl()).get();
-                Element scheduleElement = schedulePage.selectFirst("div.schedule");
-                String htmlSchedule = scheduleElement.toString();
-                if (scheduleElement != null) {
-                    return scheduleElement.text();
-                } else return "Расписание не найдено!";
-            } else {
-                return "Ошибка входа на сайт.";
-            }
-        } catch (IOException e) {
-            log.error("Ошибка в получении расписания" + e);
-            return "Произошла ошибка при получении расписания.";
-        }
+//        try {
+//            if (login()) {
+//                Document schedulePage = Jsoup.connect(getScheduleUrl()).get();
+//                Element scheduleElement = schedulePage.selectFirst("div.schedule");
+//                if (scheduleElement!=null) {
+//                    return scheduleElement.text();
+//                } else {
+//                    return "Расписание не найдено.";
+//                }
+//            } else {
+//                return "Ошибка входа на сайт.";
+//            }
+//        } catch (IOException e) {
+//            log.error("Ошибка в получении расписания" + e);
+//            return "Произошла ошибка при получении расписания.";
+//        }
+        return "Ошибка";
 
     }
 
