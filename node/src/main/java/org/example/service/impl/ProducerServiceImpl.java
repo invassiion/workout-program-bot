@@ -19,6 +19,4 @@ public class ProducerServiceImpl implements ProducerService {
     public void producerAnswer(SendMessage sendMessage) {
         rabbitTemplate.convertAndSend(ANSWER_MESSAGE, sendMessage);
     }
-
-
 }

@@ -23,7 +23,4 @@ public class ConsumerServiceImpl implements ConsumerService {
         log.debug("NODE: Text message is received");
         mainService.processTextMessage(update);
     }
-
-
-
 }

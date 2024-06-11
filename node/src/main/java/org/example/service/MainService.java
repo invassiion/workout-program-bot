@@ -5,5 +5,5 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 public interface MainService {
     void processTextMessage(Update update);
-    void processScheduleMessage(SendMessage sendMessage);
+    void processProgramMessage(SendMessage sendMessage);
 }

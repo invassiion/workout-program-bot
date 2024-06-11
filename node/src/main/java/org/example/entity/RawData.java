@@ -3,10 +3,8 @@ package org.example.entity;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.*;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import jakarta.persistence.*;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
-import javax.persistence.*;
 
 @Setter
 @Getter
@@ -16,7 +14,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "raw_data")
-@TypeDef(name = "jsonb" , typeClass = JsonBinaryType.class)
 public class RawData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +22,5 @@ public class RawData {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     private Update event;
+//    TODO ИСправить проблему с аннотациями Type и TypeDef.
 }
