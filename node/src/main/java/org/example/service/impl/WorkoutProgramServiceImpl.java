@@ -19,6 +19,7 @@ import java.util.List;
 public class WorkoutProgramServiceImpl implements WorkoutProgramService {
 
     private final WorkoutProgramDAO repository;
+
     @Override
     public List<WorkoutProgram> getAllprograms() {
         return repository.findAll();

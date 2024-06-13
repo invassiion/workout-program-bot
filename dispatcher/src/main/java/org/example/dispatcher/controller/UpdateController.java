@@ -21,10 +21,12 @@ public class UpdateController {
     private final UpdateProducer updateProducer;
 
     public void  registerBot(TelegramBot telegramBot) {
+        log.info("Registering bot: " + telegramBot);
         this.telegramBot = telegramBot;
     }
 
     public void processUpdate(Update update) {
+        log.info("Received update: " + update);
         if (update == null) {
             log.error("Received update is null");
             return;
@@ -43,10 +45,12 @@ public class UpdateController {
     }
 
     public void setView(SendMessage sendMessage) {
+        log.info("Sending message: " + sendMessage);
         telegramBot.sendAnswerMessage(sendMessage);
     }
 
    private void processCommand(Update update) {
+       log.info("Processing command: " + update.getMessage().getText());
         updateProducer.produce(update);
         setCommandReceivedView(update);
     }

@@ -21,6 +21,7 @@ public class UpdateProducerImpl implements UpdateProducer {
 
     @Override
     public void produce(Update update) {
+        log.info("Producing update: " + update);
         log.debug(update.getMessage().getText());
         rabbitTemplate.convertAndSend(TEXT_MESSAGE_UPDATE, update);
     }

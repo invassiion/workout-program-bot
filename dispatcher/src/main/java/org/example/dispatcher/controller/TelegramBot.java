@@ -1,8 +1,9 @@
 package org.example.dispatcher.controller;
 
-import jakarta.annotation.PostConstruct;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -10,7 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-
+import javax.annotation.PostConstruct;
 
 
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class TelegramBot extends TelegramLongPollingBot{
     @Value("${bot.token}")
     private String botToken;
 
+    @Autowired
     private final UpdateController updateController;
 
     @Override
@@ -37,6 +39,7 @@ public class TelegramBot extends TelegramLongPollingBot{
 
     @PostConstruct
     public void  init() {
+        log.info("Initializing TelegramBot");
         updateController.registerBot(this);
     }
 

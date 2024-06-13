@@ -1,11 +1,12 @@
 package org.example.entity.mongoEntity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.List;
 
 
@@ -23,7 +24,11 @@ public class WorkoutProgram {
     private String name;
     private String description;
     private List<Exercise> exercises;
+    private Integer userLevel;
+
 }
+
+
 @Setter
 @Getter
 @EqualsAndHashCode

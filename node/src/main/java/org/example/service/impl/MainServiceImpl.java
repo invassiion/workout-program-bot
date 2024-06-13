@@ -30,6 +30,7 @@ public class MainServiceImpl implements MainService {
     
     @Override
     public void processTextMessage(Update update) {
+        log.info("Processing text message: " + update);
         saveRawData(update);
         var appUser = findOrSaveAppUser(update);
         var text = update.getMessage().getText();
@@ -38,7 +39,7 @@ public class MainServiceImpl implements MainService {
         if (CANCEL.equals(text)) {
             output = cancelProcess(appUser);
         } else if (START.equals(text)) {
-            output = startCommand();
+              output = startCommand();
         } else if (HELP.equals(text)) {
             output = help();
         } else if (SURVEY.equals(text)) {
@@ -56,12 +57,14 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public void processProgramMessage(SendMessage sendMessage) {
+        log.info("Processing schedule message: " + sendMessage);
         producerService.producerAnswer(sendMessage);
         log.debug("Сообщение получено от Node");
     }
 
     private String startSurvey(AppUser appUser) {
-        return surveyService.startSurvey(appUser);
+        Long userId =   appUser.getId().longValue();
+        return surveyService.startSurvey(userId);
     }
 
     private String startCommand() {
@@ -74,20 +77,10 @@ public class MainServiceImpl implements MainService {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(output);
+        log.info("Sending answer: " + sendMessage);
         producerService.producerAnswer(sendMessage);
     }
 
-    private String processServiceCommand(AppUser appUser, String cmd) {
-        if (HELP.equals(cmd)) {
-            return help();
-        } else if (START.equals(cmd)) {
-            return startCommand();
-        } else if (cmd.startsWith(WORKOUT_PROGRAM.toString())) {
-            return processWorkoutProgram(appUser, cmd);
-        } else {
-            return "Неизвестная команда! Чтобы посмотреть список доступных команд, введите /help.";
-        }
-    }
 
     private String processWorkoutProgram(AppUser appUser, String cmd) {
         // Извлечение ID программы из команды и получение программы из базы данных

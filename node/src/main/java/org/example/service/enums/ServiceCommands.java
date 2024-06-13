@@ -19,6 +19,6 @@ public enum ServiceCommands {
     }
 
     public boolean equals(String cmd) {
-        return this.cmd.equals(cmd);
+        return this.toString().equals(cmd);
     }
 }
