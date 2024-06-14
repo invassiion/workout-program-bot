@@ -123,8 +123,20 @@ public class SurveyServiceImpl implements SurveyService {
             return createEditMessage(update, questionIndex);
         } else {
             surveyResults.put(userId, result);
-            return finalizeSurvey(update,result);
+            return finalizeSurveyAsEditMessage(update, result);
         }
+    }
+
+    private EditMessageText finalizeSurveyAsEditMessage(Update update, SurveyResult result) {
+        Long userId = result.getUserId();
+        String programId = workoutProgramService.findProgramIdBySurveyResult(result);
+        userQuestionIndex.remove(userId);
+        surveyResults.remove(userId);
+
+        EditMessageText messageText = new EditMessageText();
+        messageText.setChatId(update.getCallbackQuery().getMessage().getChatId().toString());
+        messageText.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+        return messageText;
     }
 
     private EditMessageText createEditMessage(Update update, int questionIndex) {
@@ -142,15 +154,16 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
 
-    private EditMessageText finalizeSurvey(Update update, SurveyResult result) {
+    private SendMessage finalizeSurvey(Update update, SurveyResult result) {
         Long userId = result.getUserId();
         String programId = workoutProgramService.findProgramIdBySurveyResult(result);
         userQuestionIndex.remove(userId);
         surveyResults.remove(userId);
 
-        return new EditMessageText(update.getCallbackQuery().getMessage().getChatId().toString(),
-                update.getCallbackQuery().getMessage().getMessageId(),
-                "Спасибо за прохождение опроса! Ваша программа тренировок: " + programId);
+       SendMessage message = new SendMessage();
+       message.setChatId(update.getMessage().getChatId().toString());
+       message.setText("Спасибо за прохождение опроса! Ваша программа тренировок: " + programId);
+       return  message;
     }
 
 }

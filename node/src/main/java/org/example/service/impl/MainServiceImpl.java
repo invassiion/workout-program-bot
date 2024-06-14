@@ -10,6 +10,7 @@ import org.example.service.MainService;
 import org.example.service.ProducerService;
 import org.example.service.SurveyService;
 import org.example.service.WorkoutProgramService;
+import org.example.surveyUtils.questions.SurveyQuestions;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -64,7 +65,8 @@ public class MainServiceImpl implements MainService {
 
     private String startSurvey(AppUser appUser) {
         Long userId =   appUser.getId().longValue();
-        return surveyService.startSurvey(userId);
+        surveyService.startSurvey(userId);
+        return "Начнем опрос! " + SurveyQuestions.QUESTIONS[0];
     }
 
     private String startCommand() {
