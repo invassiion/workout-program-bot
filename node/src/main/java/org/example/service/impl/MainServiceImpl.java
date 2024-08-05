@@ -48,8 +48,7 @@ public class MainServiceImpl implements MainService {
         } else if (text.startsWith(WORKOUT_PROGRAM.toString())) {
             output = processWorkoutProgram(appUser, text);
         } else {
-            log.error("Неизвестная команда: " + text);
-            output = "Неизвестная команда! Введите /cancel и попробуйте снова!";
+           output = handleSurveyResponse( update, appUser);
         }
 
         var chatId = update.getMessage().getChatId();
@@ -122,5 +121,14 @@ public class MainServiceImpl implements MainService {
                 .event(update)
                 .build();
         rawDataDAO.save(rawData);
+    }
+
+    private String handleSurveyResponse(Update update, AppUser appUser) {
+        Long userId = appUser.getId().longValue();
+        log.info("Handling survey response for user: " + userId);
+        SendMessage surveyResponse = surveyService.processSurveyResponse(update);
+        log.info("Survey response: " + surveyResponse);
+        producerService.producerAnswer(surveyResponse);
+        return surveyResponse.getText();
     }
 }
