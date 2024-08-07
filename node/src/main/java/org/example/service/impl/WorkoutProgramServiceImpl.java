@@ -8,7 +8,7 @@ import org.example.entity.mongoEntity.WorkoutProgram;
 
 import org.example.service.WorkoutProgramService;
 
-import org.example.surveyUtils.model.SurveyResult;
+import org.example.entity.SurveyResult;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -2,12 +2,11 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.example.surveyUtils.model.SurveyResult;
+import org.example.dao.SurveyResultDAO;
+import org.example.entity.SurveyResult;
 import org.example.service.SurveyService;
 import org.example.service.WorkoutProgramService;
 import org.example.surveyUtils.questions.SurveyQuestions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -26,12 +25,15 @@ import java.util.Map;
 public class SurveyServiceImpl implements SurveyService {
 
     private final WorkoutProgramService workoutProgramService;
+    private final SurveyResultDAO surveyResultDAO;
     private final Map<Long, SurveyResult> surveyResults = new HashMap<>();
     private final Map<Long, Integer> userQuestionIndex = new HashMap<>();
 
     @Override
     public void startSurvey(Long userId) {
-        surveyResults.put(userId, new SurveyResult());
+        SurveyResult surveyResult = new SurveyResult();
+        surveyResult.setUserId(userId);
+        surveyResults.put(userId, surveyResult);
         userQuestionIndex.put(userId, 0);
     }
 
@@ -81,13 +83,15 @@ public class SurveyServiceImpl implements SurveyService {
             log.error("Invalid input for question index " + questionIndex + ":" + userResponse, e);
             return  createErrorMessage(update, questionIndex);
         }
+
+        surveyResultDAO.save(result);
+
         questionIndex++;
         userQuestionIndex.put(userId, questionIndex);
 
         if (questionIndex < SurveyQuestions.QUESTIONS.length) {
             return createQuestionMessage(update, questionIndex);
         } else {
-            surveyResults.put(userId, result);
             return finalizeSurvey(update, result);
         }
     }
@@ -144,13 +148,14 @@ public class SurveyServiceImpl implements SurveyService {
                 break;
         }
 
+        surveyResultDAO.save(result);
+
         questionIndex++;
         userQuestionIndex.put(userId, questionIndex);
 
         if (questionIndex < SurveyQuestions.QUESTIONS.length) {
             return createEditMessage(update, questionIndex);
         } else {
-            surveyResults.put(userId, result);
             return finalizeSurveyAsEditMessage(update, result);
         }
     }
@@ -175,6 +180,8 @@ public class SurveyServiceImpl implements SurveyService {
         userQuestionIndex.remove(userId);
         surveyResults.remove(userId);
 
+        surveyResultDAO.save(result);
+
         SendMessage message = new SendMessage();
         message.setChatId(update.getMessage().getChatId().toString());
         message.setText("Спасибо за прохождение опроса! Ваша программа тренировок: " + programId);
@@ -186,6 +193,8 @@ public class SurveyServiceImpl implements SurveyService {
         String programId = workoutProgramService.findProgramIdBySurveyResult(result);
         userQuestionIndex.remove(userId);
         surveyResults.remove(userId);
+
+        surveyResultDAO.save(result);
 
         EditMessageText message = new EditMessageText();
         message.setChatId(update.getCallbackQuery().getMessage().getChatId().toString());
