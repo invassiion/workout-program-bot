@@ -8,7 +8,7 @@ import org.example.entity.mongoEntity.WorkoutProgram;
 
 import org.example.service.WorkoutProgramService;
 
-import org.example.entity.SurveyResult;
+import org.example.surveyUtils.model.SurveyResult;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,5 +46,6 @@ public class WorkoutProgramServiceImpl implements WorkoutProgramService {
     }
 }
 
-
+    
+}
 

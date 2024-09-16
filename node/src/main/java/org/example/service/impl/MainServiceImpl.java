@@ -28,7 +28,7 @@ public class MainServiceImpl implements MainService {
     private final ProducerService producerService;
     private final WorkoutProgramService workoutProgramService;
     private final SurveyService surveyService;
-    
+
     @Override
     public void processTextMessage(Update update) {
         log.info("Processing text message: " + update);
@@ -40,7 +40,7 @@ public class MainServiceImpl implements MainService {
         if (CANCEL.equals(text)) {
             output = cancelProcess(appUser);
         } else if (START.equals(text)) {
-              output = startCommand();
+            output = startCommand();
         } else if (HELP.equals(text)) {
             output = help();
         } else if (SURVEY.equals(text)) {
@@ -123,12 +123,6 @@ public class MainServiceImpl implements MainService {
         rawDataDAO.save(rawData);
     }
 
-    private String handleSurveyResponse(Update update, AppUser appUser) {
-        Long userId = appUser.getId().longValue();
-        log.info("Handling survey response for user: " + userId);
-        SendMessage surveyResponse = surveyService.processSurveyResponse(update);
-        log.info("Survey response: " + surveyResponse);
-        producerService.producerAnswer(surveyResponse);
-        return surveyResponse.getText();
-    }
 }
+
+

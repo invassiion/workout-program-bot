@@ -1,7 +1,7 @@
 package org.example.service;
 
 import org.example.entity.mongoEntity.WorkoutProgram;
-import org.example.entity.SurveyResult;
+import org.example.surveyUtils.model.SurveyResult;
 
 import java.util.List;
 
