@@ -1,7 +1,9 @@
 package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.surveyUtils.model.SurveyResult;
+import lombok.extern.log4j.Log4j;
+import org.example.dao.SurveyResultDAO;
+import org.example.entity.SurveyResult;
 import org.example.service.SurveyService;
 import org.example.service.WorkoutProgramService;
 import org.example.surveyUtils.questions.SurveyQuestions;
@@ -17,17 +19,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Log4j
 @RequiredArgsConstructor
 @Service
 public class SurveyServiceImpl implements SurveyService {
 
     private final WorkoutProgramService workoutProgramService;
+    private final SurveyResultDAO surveyResultDAO;
     private final Map<Long, SurveyResult> surveyResults = new HashMap<>();
     private final Map<Long, Integer> userQuestionIndex = new HashMap<>();
 
     @Override
     public void startSurvey(Long userId) {
-        surveyResults.put(userId, new SurveyResult());
+        SurveyResult surveyResult = new SurveyResult();
+        surveyResult.setUserId(userId);
+        surveyResults.put(userId, surveyResult);
         userQuestionIndex.put(userId, 0);
     }
 
@@ -35,44 +41,61 @@ public class SurveyServiceImpl implements SurveyService {
     public SendMessage processSurveyResponse(Update update) {
         Long userId = update.getMessage().getFrom().getId();
         String userResponse = update.getMessage().getText();
+
+
+        if (!userQuestionIndex.containsKey(userId)) {
+            log.warn("No question index found for user: " + userId + ". Starting survey from the beginning.");
+            startSurvey(userId);
+        }
+
         SurveyResult result = surveyResults.get(userId);
         int questionIndex = userQuestionIndex.get(userId);
 
-        switch (questionIndex) {
-            case 0:
-                result.setGender(userResponse);
-                break;
-            case 1:
-                result.setHeight(Integer.parseInt(userResponse));
-                break;
-            case 2:
-                result.setWeight(Integer.parseInt(userResponse));
-                break;
-            case 3:
-                result.setAge(Integer.parseInt(userResponse));
-                break;
-            case 4:
-                result.setExerciseFrequency(userResponse);
-                break;
-            case 5:
-                result.setFitnessLevel(Integer.parseInt(userResponse));
-                break;
-            case 6:
-                result.setGoal(userResponse);
-                break;
-            default:
-                break;
+        log.info("Processing survey response for user: " + userId + " at question index: " + questionIndex);
+
+        try {
+            switch (questionIndex) {
+                case 0:
+                    result.setGender(userResponse);
+                    break;
+                case 1:
+                    result.setHeight(Integer.parseInt(userResponse));
+                    break;
+                case 2:
+                    result.setWeight(Integer.parseInt(userResponse));
+                    break;
+                case 3:
+                    result.setAge(Integer.parseInt(userResponse));
+                    break;
+                case 4:
+                    result.setExerciseFrequency(userResponse);
+                    break;
+                case 5:
+                    result.setFitnessLevel(Integer.parseInt(userResponse));
+                    break;
+                case 6:
+                    result.setGoal(userResponse);
+                    break;
+                default:
+                    break;
+            }
+        } catch (NumberFormatException e) {
+            log.error("Invalid input for question index " + questionIndex + ":" + userResponse, e);
+            return  createErrorMessage(update, questionIndex);
         }
+
+        surveyResultDAO.save(result);
+
         questionIndex++;
         userQuestionIndex.put(userId, questionIndex);
 
         if (questionIndex < SurveyQuestions.QUESTIONS.length) {
             return createQuestionMessage(update, questionIndex);
         } else {
-            surveyResults.put(userId, result);
             return finalizeSurvey(update, result);
         }
     }
+
 
     private SendMessage createQuestionMessage(Update update, int questionIndex) {
         SendMessage message = new SendMessage();
@@ -90,7 +113,7 @@ public class SurveyServiceImpl implements SurveyService {
     private InlineKeyboardMarkup createInlineKeyboard(String[] options) {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
 
-        for(String option : options) {
+        for (String option : options) {
             List<InlineKeyboardButton> row = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton(option);
             button.setCallbackData(option);
@@ -99,6 +122,7 @@ public class SurveyServiceImpl implements SurveyService {
         }
         return new InlineKeyboardMarkup(keyboard);
     }
+
     public EditMessageText processCallbackQuery(Update update) {
         Long userId = update.getCallbackQuery().getFrom().getId();
         String userResponse = update.getCallbackQuery().getData();
@@ -116,6 +140,7 @@ public class SurveyServiceImpl implements SurveyService {
                 break;
         }
 
+
         questionIndex++;
         userQuestionIndex.put(userId, questionIndex);
 
@@ -123,7 +148,7 @@ public class SurveyServiceImpl implements SurveyService {
             return createEditMessage(update, questionIndex);
         } else {
             surveyResults.put(userId, result);
-            return finalizeSurveyAsEditMessage(update, result);
+            finalizeSurveyAsEditMessage(update, result);
         }
     }
 
@@ -160,6 +185,7 @@ public class SurveyServiceImpl implements SurveyService {
         userQuestionIndex.remove(userId);
         surveyResults.remove(userId);
 
+
         SendMessage message = new SendMessage();
         message.setChatId(update.getMessage().getChatId().toString());
         message.setText("Спасибо за прохождение опроса! Ваша программа тренировок: " + programId);
@@ -167,5 +193,3 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
 }
-
-

@@ -42,7 +42,10 @@ public class WorkoutProgramServiceImpl implements WorkoutProgramService {
 
     @Override
     public String findProgramIdBySurveyResult(SurveyResult result) {
-        return repository.findAll().stream().findFirst().map(WorkoutProgram::getId).orElse(null);
+       return repository.findAll().stream().findFirst().map(WorkoutProgram::getId).orElse(null);
     }
+}
+
+    
 }
 

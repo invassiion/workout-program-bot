@@ -48,8 +48,7 @@ public class MainServiceImpl implements MainService {
         } else if (text.startsWith(WORKOUT_PROGRAM.toString())) {
             output = processWorkoutProgram(appUser, text);
         } else {
-            log.error("Неизвестная команда: " + text);
-            output = "Неизвестная команда! Введите /cancel и попробуйте снова!";
+           output = handleSurveyResponse( update, appUser);
         }
 
         var chatId = update.getMessage().getChatId();
@@ -123,4 +122,7 @@ public class MainServiceImpl implements MainService {
                 .build();
         rawDataDAO.save(rawData);
     }
+
 }
+
+
