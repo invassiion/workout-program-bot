@@ -48,7 +48,7 @@ public class MainServiceImpl implements MainService {
         } else if (text.startsWith(WORKOUT_PROGRAM.toString())) {
             output = processWorkoutProgram(appUser, text);
         } else {
-           output = handleSurveyResponse( update, appUser);
+            output = handleSurveyResponse( update, appUser);
         }
 
         var chatId = update.getMessage().getChatId();

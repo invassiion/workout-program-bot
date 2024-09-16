@@ -3,7 +3,7 @@ package org.example.service.impl;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.example.dao.mongoDao.WorkoutProgramDAO;
+import org.example.dao.WorkoutProgramDAO;
 import org.example.entity.mongoEntity.WorkoutProgram;
 
 import org.example.service.WorkoutProgramService;
