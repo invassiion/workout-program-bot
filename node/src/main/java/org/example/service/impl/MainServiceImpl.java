@@ -10,6 +10,7 @@ import org.example.service.MainService;
 import org.example.service.ProducerService;
 import org.example.service.SurveyService;
 import org.example.service.WorkoutProgramService;
+import org.example.surveyUtils.questions.SurveyQuestions;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -27,7 +28,7 @@ public class MainServiceImpl implements MainService {
     private final ProducerService producerService;
     private final WorkoutProgramService workoutProgramService;
     private final SurveyService surveyService;
-    
+
     @Override
     public void processTextMessage(Update update) {
         log.info("Processing text message: " + update);
@@ -39,7 +40,7 @@ public class MainServiceImpl implements MainService {
         if (CANCEL.equals(text)) {
             output = cancelProcess(appUser);
         } else if (START.equals(text)) {
-              output = startCommand();
+            output = startCommand();
         } else if (HELP.equals(text)) {
             output = help();
         } else if (SURVEY.equals(text)) {
@@ -64,7 +65,8 @@ public class MainServiceImpl implements MainService {
 
     private String startSurvey(AppUser appUser) {
         Long userId =   appUser.getId().longValue();
-        return surveyService.startSurvey(userId);
+        surveyService.startSurvey(userId);
+        return "Начнем опрос! " + SurveyQuestions.QUESTIONS[0];
     }
 
     private String startCommand() {
