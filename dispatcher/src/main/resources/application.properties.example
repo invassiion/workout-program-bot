@@ -1,9 +1,0 @@
-server.port=8084
-
-bot.name=
-bot.token=
-
-spring.rabbitmq.host=localhost
-spring.rabbitmq.port=5672
-spring.rabbitmq.username=denis
-spring.rabbitmq.password=p@ssw0rd
