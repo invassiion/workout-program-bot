@@ -1,4 +1,4 @@
-package main.java.com.project.service;
+package com.project.service;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
