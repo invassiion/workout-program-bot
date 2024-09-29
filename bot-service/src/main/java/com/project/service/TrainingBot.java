@@ -1,9 +1,9 @@
 package com.project.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -13,16 +13,22 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class TrainingBot  extends TelegramLongPollingBot {
 
+    @Autowired
+    private MessageHandler messageHandler;
 
     private final String botUsername;
     private final String botToken;
 
     @Autowired
     public TrainingBot(@Value("${telegram.bot.username}") String botUsername,
-                       @Value("${telegram.bot.token}") String botToken) {
+                       @Value("${telegram.bot.token}") String botToken,
+                       DefaultBotOptions options) {
+        super(options, botToken);
         this.botUsername = botUsername;
         this.botToken = botToken;
     }
+
+
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -31,8 +37,12 @@ public class TrainingBot  extends TelegramLongPollingBot {
             Long chatId = update.getMessage().getChatId();
 
             if (messageText.equals("/start")) {
-                sendMessage(chatId, "Привет! Я тренировочный бот. Готов помочь тебе с программой тренировок!");
+               messageHandler.handleCommand(messageText);
+            } else {
+                messageHandler.handleTextMessage(messageText);
             }
+
+            sendMessage(chatId, "Ваше сообщение обработано.");
 
         }
     }
