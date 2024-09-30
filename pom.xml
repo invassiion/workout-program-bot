@@ -15,10 +15,7 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>training-service</module>
-        <module>auth-service</module>
-        <module>notification-service</module>
-        <module>progress-service</module>
+        <module>user-service</module>
         <module>bot-service</module>
     </modules>
 
