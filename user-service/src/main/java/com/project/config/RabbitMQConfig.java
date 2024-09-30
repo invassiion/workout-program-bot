@@ -12,16 +12,16 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue authQueue() {
-        return new Queue("authQueue", false);
+        return new Queue("userQueue", false);
     }
     @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange("authExchange");
+    public TopicExchange userExchange() {
+        return new TopicExchange("userExchange");
     }
 
     @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
+    public Binding bindingUser(Queue userQueue, TopicExchange userExchange) {
 
-        return BindingBuilder.bind(queue).to(exchange).with("auth.#");
+        return BindingBuilder.bind(userQueue).to(userExchange).with("user.registration");
     }
 }
