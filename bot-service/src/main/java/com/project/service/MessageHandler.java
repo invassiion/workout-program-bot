@@ -14,7 +14,6 @@ public class MessageHandler {
     private RabbitTemplate rabbitTemplate;
 
     public void handleTextMessage(String message, Long chatId) {
-        // Отправляем текстовое сообщение в user-service через RabbitMQ
         rabbitTemplate.convertAndSend("userExchange", "user.registration", buildMessage(message, chatId));
     }
 

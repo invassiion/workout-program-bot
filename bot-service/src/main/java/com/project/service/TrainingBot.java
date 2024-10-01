@@ -37,13 +37,12 @@ public class TrainingBot  extends TelegramLongPollingBot {
             Long chatId = update.getMessage().getChatId();
 
             if (messageText.equals("/start")) {
-               messageHandler.handleCommand(messageText);
+               messageHandler.handleCommand("/start",chatId);
+               sendMessage(chatId,"Привет! Как вас зовут?");
             } else {
-                messageHandler.handleTextMessage(messageText);
+                messageHandler.handleTextMessage(messageText, chatId);
+                sendMessage(chatId, "Спасибо! Вы зарегистрированы.");
             }
-
-            sendMessage(chatId, "Ваше сообщение обработано.");
-
         }
     }
 

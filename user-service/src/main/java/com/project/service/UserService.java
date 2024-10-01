@@ -16,7 +16,7 @@ public class UserService {
     public void registerUser(UserDto userDto) {
         User user = new User();
         user.setUsername(userDto.getUsername());
-        user.setChatId(user.getChatId());
+        user.setChatId(userDto.getChatId());
         userRepository.save(user);
     }
 }

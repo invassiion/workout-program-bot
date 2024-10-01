@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.project</groupId>
-    <artifactId>training-planner-bot</artifactId>
+    <artifactId>workout-program-bot</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
     <modules>
