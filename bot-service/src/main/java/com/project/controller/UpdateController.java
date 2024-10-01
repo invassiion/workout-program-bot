@@ -1,20 +1,21 @@
-package com.project.service;
+package com.project.controller;
 
-import com.project.messageUtils.MessageUtils;
+import com.project.service.UpdateProducer;
+import com.project.utils.MessageUtils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Log4j
 @Component
-public class UpdateService {
+public class UpdateController {
     private TrainingBot trainingBot;
     private final MessageUtils messageUtils;
-    private final MessageHandler messageHandler;
+    private final UpdateProducer updateProducer;
 
-    public UpdateService(MessageUtils messageUtils, MessageHandler messageHandler) {
+    public UpdateController(MessageUtils messageUtils, UpdateProducer updateProducer) {
         this.messageUtils = messageUtils;
-        this.messageHandler = messageHandler;
+        this.updateProducer = updateProducer;
     }
 
     public void registerBot(TrainingBot trainingBot) {
@@ -25,14 +26,11 @@ public class UpdateService {
         var text = update.getMessage().getText();
         var chatId = update.getMessage().getChatId();
         if (update == null) {
-            log.error("Received update is null");
             return;
         }
 
         if (update.getMessage() != null) {
-            messageHandler.handleCommand(text, chatId);
-        } else {
-            log.error("Unsupported message type is received: " + update);
+            System.out.println("Message not null");
         }
     }
 }
