@@ -13,19 +13,19 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class TrainingBot  extends TelegramLongPollingBot {
 
-    @Autowired
-    private MessageHandler messageHandler;
 
     private final String botUsername;
     private final String botToken;
+    private final MessageHandler messageHandler;
 
     @Autowired
     public TrainingBot(@Value("${telegram.bot.username}") String botUsername,
                        @Value("${telegram.bot.token}") String botToken,
-                       DefaultBotOptions options) {
+                       DefaultBotOptions options, MessageHandler messageHandler) {
         super(options, botToken);
         this.botUsername = botUsername;
         this.botToken = botToken;
+        this.messageHandler = messageHandler;
     }
 
 
@@ -36,13 +36,7 @@ public class TrainingBot  extends TelegramLongPollingBot {
             String messageText = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
 
-            if (messageText.equals("/start")) {
-               messageHandler.handleCommand("/start",chatId);
-               sendMessage(chatId,"Привет! Как вас зовут?");
-            } else {
-                messageHandler.handleTextMessage(messageText, chatId);
-                sendMessage(chatId, "Спасибо! Вы зарегистрированы.");
-            }
+            messageHandler.handleCommand(messageText, chatId);
         }
     }
 
