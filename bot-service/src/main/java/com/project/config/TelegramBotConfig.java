@@ -30,8 +30,4 @@ public class TelegramBotConfig {
         return new DefaultBotOptions();
     }
 
-//    @Bean
-//    public TrainingBot trainingBot(DefaultBotOptions botOptions) {
-//        return new TrainingBot(botUsername, botToken, botOptions);
-//    }
 }
