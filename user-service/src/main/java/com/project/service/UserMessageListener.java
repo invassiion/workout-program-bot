@@ -1,5 +1,6 @@
 package com.project.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.dto.UserDto;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -17,11 +18,19 @@ public class UserMessageListener {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            UserDto userDto = objectMapper.readValue(message, UserDto.class);
+            JsonNode jsonNode = objectMapper.readTree(message);
+            String username = jsonNode.get("message").asText();
+            Long chatId = jsonNode.get("chatId").asLong();
+
+            UserDto userDto = new UserDto();
+            userDto.setUsername(username);
+            userDto.setChatId(chatId);
             userService.registerUser(userDto);
-            System.out.println("User registered: " + userDto.getUsername());
+
+            System.out.println("User registered: " + username);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 }
