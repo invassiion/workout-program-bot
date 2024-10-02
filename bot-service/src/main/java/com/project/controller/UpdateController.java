@@ -4,6 +4,7 @@ import com.project.service.UpdateProducer;
 import com.project.utils.MessageUtils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Log4j
@@ -30,7 +31,34 @@ public class UpdateController {
         }
 
         if (update.getMessage() != null) {
-            System.out.println("Message not null");
+            distributeMessage(update);
+        } else {
+            log.error("Unsupported message type is received" + update);
         }
     }
+
+    private void distributeMessage(Update update) {
+        var message = update.getMessage();
+        if (message.getText().startsWith("/")) {
+             processCommandMessage(update);
+        } else {
+            setUnsupportedMessageTypeView(update);
+        }
+    }
+
+    private void setUnsupportedMessageTypeView(Update update) {
+        var sendMessage = messageUtils.generateSendMessageWithText(update,
+                "Неподдерживаемый тип сообщения!");
+        setView(sendMessage);
+    }
+
+    public void setView(SendMessage sendMessage) {
+        trainingBot.sendAnswerMessage(sendMessage);
+    }
+
+    private void processCommandMessage(Update update) {
+        updateProducer.produce("commandQueue",update);
+    }
+
+
 }
