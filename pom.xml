@@ -17,6 +17,7 @@
     <modules>
         <module>user-service</module>
         <module>bot-service</module>
+        <module>common-rabbitmq</module>
     </modules>
 
     <properties>

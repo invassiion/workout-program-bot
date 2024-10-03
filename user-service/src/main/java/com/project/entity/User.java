@@ -1,14 +1,11 @@
 package com.project.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
