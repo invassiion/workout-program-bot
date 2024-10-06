@@ -1,7 +1,7 @@
 package com.project.service.impl;
 
-import com.project.entity.User;
-import com.project.model.UserRepository;
+import com.project.entity.RawData;
+import com.project.model.RawDataDAO;
 import com.project.service.MainService;
 import com.project.service.ProducerService;
 import lombok.extern.log4j.Log4j;
@@ -14,11 +14,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class MainServiceImpl implements MainService {
 
 
-    private final UserRepository userRepository;
+    private final RawDataDAO rawDataDAO;
     private final ProducerService producerService;
 
-    public MainServiceImpl(UserRepository userRepository, ProducerService producerService) {
-        this.userRepository = userRepository;
+    public MainServiceImpl(RawDataDAO userRepository, ProducerService producerService) {
+        this.rawDataDAO = userRepository;
         this.producerService = producerService;
     }
 
@@ -34,7 +34,7 @@ public class MainServiceImpl implements MainService {
     }
 
     private void saveUserData(Update update) {
-        User user = User.builder().build();
-        userRepository.save(user);
+        RawData user = RawData.builder().build();
+        rawDataDAO.save(user);
     }
 }

@@ -8,14 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static configuration.RabbitQueue.ANSWER_QUEUE;
+import static configuration.RabbitQueue.TEXT_QUEUE;
+
 @Configuration
 public class RabbitMQConfig {
-
-    @Value("${rabbitmq.command.queue}")
-    private String commandQueueName;
-
-    @Value("${rabbitmq.answer.queue}")
-    private String answerQueueName;
 
     @Bean
     public MessageConverter jsonMessageConverter() {
@@ -23,13 +20,13 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue commandQueue() {
-        return new Queue(commandQueueName, false);
+    public Queue textMessageQueue() {
+        return new Queue(TEXT_QUEUE,false);
     }
 
     @Bean
     public Queue AnswerMessageQueue() {
-        return new Queue(answerQueueName, false);
+        return new Queue(ANSWER_QUEUE, false);
     }
 
 }

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import static configuration.RabbitQueue.TEXT_QUEUE;
+
 @Log4j
 @Component
 public class UpdateController {
@@ -24,13 +26,11 @@ public class UpdateController {
     }
 
     public void processUpdate(Update update) {
-        var text = update.getMessage().getText();
-        var chatId = update.getMessage().getChatId();
         if (update == null) {
             return;
         }
 
-        if (update.getMessage() != null) {
+        if (update.hasMessage()) {
             distributeMessage(update);
         } else {
             log.error("Unsupported message type is received" + update);
@@ -39,11 +39,15 @@ public class UpdateController {
 
     private void distributeMessage(Update update) {
         var message = update.getMessage();
-        if (message.getText().startsWith("/")) {
-             processCommandMessage(update);
+        if (message.hasText()) {
+            processTextMessage(update);
         } else {
             setUnsupportedMessageTypeView(update);
         }
+    }
+
+    private void processTextMessage(Update update) {
+        updateProducer.produce(TEXT_QUEUE, update);
     }
 
     private void setUnsupportedMessageTypeView(Update update) {
@@ -55,10 +59,5 @@ public class UpdateController {
     public void setView(SendMessage sendMessage) {
         trainingBot.sendAnswerMessage(sendMessage);
     }
-
-    private void processCommandMessage(Update update) {
-        updateProducer.produce("commandQueue",update);
-    }
-
 
 }

@@ -1,18 +1,23 @@
 package com.project.entity;
 
+
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+@EqualsAndHashCode(exclude = "id")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "raw_data")
+public class RawData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +28,10 @@ public class User {
 
     @Column(name = "chat_id", nullable = false, unique = true)
     private Long chatId;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = JsonBinaryType.class)
+    @Column(columnDefinition = "jsonb")
+    private Update event;
 
 }
