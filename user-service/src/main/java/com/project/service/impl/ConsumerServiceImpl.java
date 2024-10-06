@@ -21,7 +21,6 @@ public class ConsumerServiceImpl implements ConsumerService {
         this.mainService = mainService;
     }
 
-
     @Override
     @RabbitListener(queues = TEXT_QUEUE)
     public void consumeTextMessageUpdates(Update update) {
@@ -29,9 +28,4 @@ public class ConsumerServiceImpl implements ConsumerService {
         mainService.processTextMessage(update);
     }
 
-    @Override
-    @RabbitListener(queues = COMMAND_QUEUE)
-    public void consumeCommandMessageUpdates(Update update) {
-        log.debug("USER-SERVICE: command message is received");
-    }
 }
