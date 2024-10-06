@@ -16,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Setter
 @Getter
 @Entity
+@Convert(attributeName = "entityAttrName", converter = JsonBinaryType.class)
 @Table(name = "raw_data")
 public class RawData {
 
@@ -30,7 +31,6 @@ public class RawData {
     private Long chatId;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Convert(converter = JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")
     private Update event;
 
