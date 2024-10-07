@@ -21,12 +21,12 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue textMessageQueue() {
-        return new Queue(TEXT_QUEUE,false);
+        return new Queue(TEXT_QUEUE);
     }
 
     @Bean
     public Queue AnswerMessageQueue() {
-        return new Queue(ANSWER_QUEUE, false);
+        return new Queue(ANSWER_QUEUE);
     }
 
 }
