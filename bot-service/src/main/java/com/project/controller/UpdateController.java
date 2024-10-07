@@ -49,6 +49,7 @@ public class UpdateController {
 
     private void processTextMessage(Update update) {
         updateProducer.produce(TEXT_QUEUE, update);
+        log.debug("update has deleveried " + update);
     }
 
     private void setUnsupportedMessageTypeView(Update update) {

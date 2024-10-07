@@ -68,7 +68,7 @@ public class MainServiceImpl implements MainService {
                     "Чтобы ознакомиться с полным списком команд введите /help";
         } else if (HELP.equals(cmd)) {
             return help();
-        } else if (PROGRAMM.equals(cmd)) {
+        } else if (PROGRAM.equals(cmd)) {
             return "К сожалению данная функция еще в разработке...";
         } else if (PROGRESS.equals(cmd)) {
             return "К сожалению данная функция еще в разработке...";

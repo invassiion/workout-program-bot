@@ -15,17 +15,17 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class TrainingBot  extends TelegramLongPollingBot {
 
-    private final String botUsername;
+    @Value("${telegram.bot.username}")
+    private  String botUsername;
+
     @Getter
-    private final String botToken;
+    @Value("${telegram.bot.token}")
+    private  String botToken;
+
     private final UpdateController updateController;
 
     @Autowired
-    public TrainingBot(@Value("${telegram.bot.username}") String botUsername,
-                       @Value("${telegram.bot.token}") String botToken,
-                       UpdateController updateController) {
-        this.botUsername = botUsername;
-        this.botToken = botToken;
+    public TrainingBot(UpdateController updateController) {
         this.updateController = updateController;
     }
 

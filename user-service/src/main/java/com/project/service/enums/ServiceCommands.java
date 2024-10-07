@@ -5,7 +5,7 @@ public enum ServiceCommands {
     START("/cancel"),
     PROGRESS("/progress"),
     CANCEL("/cancel"),
-    PROGRAMM("/programm");
+    PROGRAM("/program");
 
     private final String cmd;
 

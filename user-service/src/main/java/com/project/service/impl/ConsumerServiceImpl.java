@@ -14,8 +14,8 @@ import static configuration.RabbitQueue.*;
 @Log4j
 @Service
 public class ConsumerServiceImpl implements ConsumerService {
-    private final MainService mainService;
 
+    private final MainService mainService;
 
     public ConsumerServiceImpl(MainService mainService, RabbitMQConfig rabbitMQConfig) {
         this.mainService = mainService;
