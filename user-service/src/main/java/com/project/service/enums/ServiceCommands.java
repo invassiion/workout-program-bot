@@ -2,7 +2,7 @@ package com.project.service.enums;
 
 public enum ServiceCommands {
     HELP("/help"),
-    START("/cancel"),
+    START("/start"),
     PROGRESS("/progress"),
     CANCEL("/cancel"),
     PROGRAM("/program");
