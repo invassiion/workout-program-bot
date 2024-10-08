@@ -24,12 +24,6 @@ public class RawData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", nullable = false)
-    private String username;
-
-    @Column(name = "chat_id", nullable = false, unique = true)
-    private Long chatId;
-
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private Update event;

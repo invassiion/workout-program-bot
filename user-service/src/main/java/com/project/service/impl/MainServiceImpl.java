@@ -7,6 +7,7 @@ import com.project.entity.enums.UserState;
 import com.project.model.RawDataDAO;
 import com.project.service.MainService;
 import com.project.service.ProducerService;
+import com.project.service.enums.ServiceCommands;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,8 +19,6 @@ import static com.project.service.enums.ServiceCommands.*;
 @Log4j
 @Service
 public class MainServiceImpl implements MainService {
-
-
     private final RawDataDAO rawDataDAO;
     private final ProducerService producerService;
     private final AppUserDAO appUserDAO;
@@ -32,13 +31,14 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public void processTextMessage(Update update) {
-        saveUserData(update);
+        saveRawData(update);
         var appUser = findOrSaveAppUser(update);
         var text = update.getMessage().getText();
 
         var output = "";
 
-        if (CANCEL.equals(text)) {
+        var serviceCommand = ServiceCommands.fromValue(text);
+        if (CANCEL.equals(serviceCommand)) {
             output = cancelProcess(appUser);
         } else if (text.startsWith("/")) {
             output = processServiceCommands(appUser, text);
@@ -60,17 +60,18 @@ public class MainServiceImpl implements MainService {
     }
 
     private String processServiceCommands(AppUser appUser, String cmd) {
-        if (START.equals(cmd)) {
+        var serviceCommand = ServiceCommands.fromValue(cmd);
+        if (START.equals(serviceCommand)) {
             return "Здравствуйте! Вас приветсвует бот-тренер. После небольшого опроса" +
                     "я подберу для вас индивидуальную программу тренировок. \n" +
                     "Также вы сможете отслеживать прогресс своих тренировок. Для того чтобы отметить тренировку" +
                     "введите команду /Progress и следуйте дальнейшим инструкциям." +
                     "Чтобы ознакомиться с полным списком команд введите /help";
-        } else if (HELP.equals(cmd)) {
+        } else if (HELP.equals(serviceCommand)) {
             return help();
-        } else if (PROGRAM.equals(cmd)) {
+        } else if (PROGRAM.equals(serviceCommand)) {
             return "К сожалению данная функция еще в разработке...";
-        } else if (PROGRESS.equals(cmd)) {
+        } else if (PROGRESS.equals(serviceCommand)) {
             return "К сожалению данная функция еще в разработке...";
         } else {
             return "Неизвестная команда! Чтобы посмотреть список доступных команд введите /help";
@@ -87,6 +88,7 @@ public class MainServiceImpl implements MainService {
     }
 
     private String cancelProcess(AppUser appUser) {
+        appUser.setState(UserState.BASIC_STATE);
         appUserDAO.save(appUser);
         return "Команда отменена!";
     }
@@ -100,6 +102,7 @@ public class MainServiceImpl implements MainService {
                     .userName(telegramUser.getUserName())
                     .firstName(telegramUser.getFirstName())
                     .lastName(telegramUser.getLastName())
+//                    TODO Изменить значения по умолчанию
                     .isTraining(false)
                     .state(UserState.BASIC_STATE)
                     .progress("MOCK")
@@ -109,7 +112,7 @@ public class MainServiceImpl implements MainService {
         return persistentAppUser;
     }
 
-    private void saveUserData(Update update) {
+    private void saveRawData(Update update) {
         RawData rawData = RawData.builder()
                 .event(update)
                 .build();
