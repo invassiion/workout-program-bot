@@ -1,24 +1,32 @@
 package com.project.controller;
 
-import com.project.service.UpdateProducer;
 import com.project.utils.MessageUtils;
 import lombok.extern.log4j.Log4j;
-import org.springframework.stereotype.Component;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import static configuration.RabbitQueue.TEXT_QUEUE;
 
 @Log4j
-@Component
+@RestController
+@RequestMapping("/update")
 public class UpdateController {
+
     private TrainingBot trainingBot;
     private final MessageUtils messageUtils;
-    private final UpdateProducer updateProducer;
 
-    public UpdateController(MessageUtils messageUtils, UpdateProducer updateProducer) {
+    public UpdateController(MessageUtils messageUtils) {
         this.messageUtils = messageUtils;
-        this.updateProducer = updateProducer;
+    }
+
+    public ResponseEntity<String> receiveUpdate(@RequestBody Update update) {
+        log.info("Received update from user-service: " + update);
+        processUpdate(update);
+
+        return ResponseEntity.ok("Update processed succesfully");
     }
 
     public void registerBot(TrainingBot trainingBot) {
@@ -48,7 +56,6 @@ public class UpdateController {
     }
 
     private void processTextMessage(Update update) {
-        updateProducer.produce(TEXT_QUEUE, update);
         log.debug("update has deleveried " + update);
     }
 

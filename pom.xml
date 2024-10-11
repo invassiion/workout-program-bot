@@ -16,7 +16,6 @@
     <modules>
         <module>user-service</module>
         <module>bot-service</module>
-        <module>common-rabbitmq</module>
         <module>common-jpa</module>
     </modules>
 
