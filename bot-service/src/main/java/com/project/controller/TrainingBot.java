@@ -1,5 +1,6 @@
 package com.project.controller;
 
+import com.project.service.UpdateService;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
@@ -18,25 +19,21 @@ public class TrainingBot  extends TelegramLongPollingBot {
     @Value("${telegram.bot.username}")
     private  String botUsername;
 
-    @Getter
-    @Value("${telegram.bot.token}")
-    private  String botToken;
+//    @Getter
+//    @Value("${telegram.bot.token}")
+//    private  String botToken;
 
-    private final UpdateController updateController;
-
+    private final UpdateService updateService;
+//Todo вернуть registerBot  для избавления от циклической зависимости между TrainingBot  и UpdateService.
     @Autowired
-    public TrainingBot(UpdateController updateController) {
-        this.updateController = updateController;
+    public TrainingBot(UpdateService updateService) {
+        this.updateService = updateService;
     }
 
-    @PostConstruct
-    public void init() {
-        updateController.registerBot(this);
-    }
 
     @Override
     public void onUpdateReceived(Update update) {
-       updateController.processUpdate(update);
+       updateService.processUpdate(update);
     }
 
     @Override
