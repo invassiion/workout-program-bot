@@ -14,12 +14,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class UpdateServiceImpl implements UpdateService {
 
     private final MessageUtils messageUtils;
-    private final TrainingBot trainingBot;
+    private TrainingBot trainingBot;
 
     @Autowired
-    public UpdateServiceImpl(MessageUtils messageUtils, TrainingBot trainingBot) {
+    public UpdateServiceImpl(MessageUtils messageUtils) {
         this.messageUtils = messageUtils;
-        this.trainingBot = trainingBot;
+
     }
 
     @Override
@@ -53,6 +53,11 @@ public class UpdateServiceImpl implements UpdateService {
         var sendMessage = messageUtils.generateSendMessageWithText(update,
                 "Неподдерживаемый тип сообщения!");
         setView(sendMessage);
+    }
+
+    @Override
+    public  void registerBot(TrainingBot trainingBot) {
+        this.trainingBot = trainingBot;
     }
 
     @Override

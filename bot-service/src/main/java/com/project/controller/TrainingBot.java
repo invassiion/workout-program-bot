@@ -30,6 +30,10 @@ public class TrainingBot  extends TelegramLongPollingBot {
         this.updateService = updateService;
     }
 
+    @PostConstruct
+    public void init() {
+        updateService.registerBot(this);
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -40,7 +44,6 @@ public class TrainingBot  extends TelegramLongPollingBot {
     public String getBotUsername() {
         return botUsername;
     }
-
 
     public void sendAnswerMessage(SendMessage sendMessage) {
         if (sendMessage != null) {
