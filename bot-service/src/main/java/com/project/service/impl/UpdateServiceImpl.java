@@ -5,7 +5,10 @@ import com.project.service.UpdateService;
 import com.project.utils.MessageUtils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -13,11 +16,16 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Service
 public class UpdateServiceImpl implements UpdateService {
 
+    private final RestTemplate restTemplate;
     private final MessageUtils messageUtils;
     private TrainingBot trainingBot;
 
+    @Value("${user-service.url}")
+    private String userServiceUrl;
+
     @Autowired
-    public UpdateServiceImpl(MessageUtils messageUtils) {
+    public UpdateServiceImpl(RestTemplate restTemplate, MessageUtils messageUtils) {
+        this.restTemplate = restTemplate;
         this.messageUtils = messageUtils;
 
     }
@@ -47,6 +55,13 @@ public class UpdateServiceImpl implements UpdateService {
 
     private void processTextMessage(Update update) {
         log.debug("Update has been delivered: " + update);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                userServiceUrl + "/updates",
+                update,
+                String.class
+        );
+        log.debug("Response from user-service: " + response.getBody());
     }
 
     private void setUnsupportedMessageTypeView(Update update) {

@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,21 +15,23 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Log4j
 @Component
-public class TrainingBot  extends TelegramLongPollingBot {
+public class TrainingBot  extends  TelegramLongPollingBot{
 
-    @Value("${telegram.bot.username}")
-    private  String botUsername;
-
-//    @Getter
-//    @Value("${telegram.bot.token}")
-//    private  String botToken;
-
+    private final String botUsername;
+    private final String botToken;
     private final UpdateService updateService;
-//Todo вернуть registerBot  для избавления от циклической зависимости между TrainingBot  и UpdateService.
+
     @Autowired
-    public TrainingBot(UpdateService updateService) {
+    public TrainingBot(@Value("${telegram.bot.username}") String botUsername,
+                       @Value("${telegram.bot.token}") String botToken,
+                       DefaultBotOptions options,
+                       UpdateService updateService) {
+        super(options, botToken);
+        this.botUsername = botUsername;
+        this.botToken = botToken;
         this.updateService = updateService;
     }
+
 
     @PostConstruct
     public void init() {
