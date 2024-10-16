@@ -23,8 +23,8 @@ public class MainServiceImpl implements MainService {
     private final ProducerService producerService;
     private final AppUserDAO appUserDAO;
 
-    public MainServiceImpl(RawDataDAO userRepository, ProducerService producerService, AppUserDAO appUserDAO) {
-        this.rawDataDAO = userRepository;
+    public MainServiceImpl(RawDataDAO rawDataDAO, ProducerService producerService, AppUserDAO appUserDAO) {
+        this.rawDataDAO = rawDataDAO;
         this.producerService = producerService;
         this.appUserDAO = appUserDAO;
     }

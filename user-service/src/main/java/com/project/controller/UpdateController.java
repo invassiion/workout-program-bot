@@ -1,5 +1,6 @@
 package com.project.controller;
 
+import com.project.service.ConsumerService;
 import com.project.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,11 @@ Update controller принимает Post - запро с телом, содер
 @RequestMapping("/updates")
 public class UpdateController {
 
-    private final MainService mainService;
+    private final ConsumerService consumerService;
 
     @Autowired
-    public UpdateController(MainService mainService) {
-        this.mainService = mainService;
+    public UpdateController(MainService mainService, ConsumerService consumerService) {
+        this.consumerService = consumerService;
     }
 
     @PostMapping
@@ -31,7 +32,7 @@ public class UpdateController {
             return ResponseEntity.badRequest().body("Update is null");
         }
 
-        mainService.processTextMessage(update);
+        consumerService.consumeTextMessageUpdates(update);
         return ResponseEntity.ok("Update processed successfully");
     }
 }
